@@ -25,8 +25,7 @@
 
 # MAGIC %md 
 # MAGIC ### A cluster has been created for this demo
-# MAGIC To run this demo, just select the cluster `dbdemos-llm-rag-chatbot-heiko_kromer` from the dropdown menu ([open cluster configuration](https://adb-6123518810556516.16.azuredatabricks.net/#setting/clusters/0227-150156-ibhpem5t/configuration)). <br />
-# MAGIC *Note: If the cluster was deleted after 30 days, you can re-create it with `dbdemos.create_cluster('llm-rag-chatbot')` or re-install the demo: `dbdemos.install('llm-rag-chatbot')`*
+# MAGIC To run this demo, just select the cluster `dbdemos-llm-rag-chatbot-heiko_kromer` from the dropdown menu ([open cluster configuration](https://adb-6123518810556516.16.azuredatabricks.net/#setting/clusters/0227-150156-ibhpem5t/configuration)).
 
 # COMMAND ----------
 
@@ -37,12 +36,12 @@
 # COMMAND ----------
 
 # DBTITLE 1,Install the required libraries
-# MAGIC %pip install mlflow==2.9.0 langchain==0.0.344 databricks-vectorsearch==0.22 databricks-sdk==0.12.0 mlflow[databricks]
+# MAGIC %pip install mlflow==2.9.0 langchain==0.0.344 databricks-vectorsearch==0.22 databricks-sdk==0.12.0 mlflow[databricks] --quiet
 # MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
 
-# MAGIC %run ../_resources/00-init $reset_all_data=false
+# MAGIC %run ../resources/00-init $reset_all_data=false
 
 # COMMAND ----------
 
@@ -77,14 +76,14 @@
 # DBTITLE 1,Make sure your SP has read access to your Vector Search Index
 index_name=f"{catalog}.{db}.embeddings_text_vs_index"
 host = "https://" + spark.conf.get("spark.databricks.workspaceUrl")
-test_demo_permissions(
-  host, 
-  secret_scope="dbdemos", 
-  secret_key="ryuta_token", 
-  vs_endpoint_name=VECTOR_SEARCH_ENDPOINT_NAME, 
-  index_name=index_name, 
-  embedding_endpoint_name="databricks-bge-large-en"
-  )
+
+#test_demo_permissions(
+#  host, 
+#  secret_scope="dbdemos", 
+#  secret_key="ryuta_token", 
+#  vs_endpoint_name=VECTOR_SEARCH_ENDPOINT_NAME, 
+#  index_name=index_name, 
+#  embedding_endpoint_name="databricks-bge-large-en")
 
 # COMMAND ----------
 
@@ -163,7 +162,7 @@ print(f"Relevant documents: {similar_documents[0]}")
 # Test Databricks Foundation LLM model
 from langchain.chat_models import ChatDatabricks
 chat_model = ChatDatabricks(endpoint="databricks-llama-2-70b-chat", max_tokens = 200)
-print(f"Test chat model: {chat_model.predict('Who won the World Cup in 2002?')}")
+print(f"Test chat model: {chat_model.predict('Who won the World Cup in 2022?')}")
 
 # COMMAND ----------
 
@@ -208,7 +207,7 @@ chain = RetrievalQA.from_chain_type(
 
 # DBTITLE 1,Let's try our chatbot in the notebook directly:
 # langchain.debug = True #uncomment to see the chain details and the full prompt being sent
-question = {"query": "Who won the world cup in 2006?"}
+question = {"query": "Who won the world cup in 2022?"}
 answer = chain.run(question)
 print(answer)
 
@@ -301,25 +300,10 @@ displayHTML(f'Your Model Endpoint Serving is now available. Open the <a href="/m
 
 # COMMAND ----------
 
-# DBTITLE 1,Let's try to send a query to our chatbot
-question = "Who played in the World Cup finals in 2022?"
+question = "Who defeated Germany in FIFA 2022 World Cup? And wht did that happen?"
 
 answer = w.serving_endpoints.query(serving_endpoint_name, inputs=[{"query": question}])
 print(answer.predictions[0])
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC
-# MAGIC ### Let's give it a try, using Gradio as UI!
-# MAGIC
-# MAGIC All you now have to do is deploy your chatbot UI. Here is a simple example using Gradio ([License](https://github.com/gradio-app/gradio/blob/main/LICENSE)). Explore the chatbot gradio [implementation](https://huggingface.co/spaces/databricks-demos/chatbot/blob/main/app.py).
-# MAGIC
-# MAGIC *Note: this UI is hosted and maintained by Databricks for demo purpose and don't use the model you just created. We'll soon show you how to do that with Lakehouse Apps!*
-
-# COMMAND ----------
-
-display_gradio_app("databricks-demos-chatbot")
 
 # COMMAND ----------
 
@@ -337,13 +321,6 @@ display_gradio_app("databricks-demos-chatbot")
 # MAGIC
 # MAGIC Lakehouse AI is uniquely positioned to accelerate your GenAI deployment.
 # MAGIC
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Next: ready to take it to a next level?
-# MAGIC
-# MAGIC Open the [02-advanced/01-PDF-Advanced-Data-Preparation]($../02-advanced/01-PDF-Advanced-Data-Preparation) notebook series to learn more about unstructured data, advanced chain, model evaluation and monitoring.
 
 # COMMAND ----------
 
