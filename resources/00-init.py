@@ -18,7 +18,6 @@
 
 # COMMAND ----------
 
-
 dbutils.widgets.text("reset_all_data", "false", "Reset Data")
 reset_all_data = dbutils.widgets.get("reset_all_data") == "true"
 

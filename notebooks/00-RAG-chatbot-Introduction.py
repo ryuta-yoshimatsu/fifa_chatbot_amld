@@ -67,7 +67,7 @@
 # MAGIC
 # MAGIC In this demo, we will show you how to build and deploy your custom chatbot, answering questions on any custom or private information.
 # MAGIC
-# MAGIC As an example, we will specialize this chatbot to answer questions over Databricks, feeding databricks.com documentation articles to the model for accurate answers.
+# MAGIC As an example, we will specialize this chatbot to answer questions over FIFA 2022 World Cup, feeding Wikipedia pages about the 2022 World Cup to the model for accurate answers.
 # MAGIC
 # MAGIC Here is the flow we will implement:
 # MAGIC
@@ -97,23 +97,22 @@
 
 # MAGIC %md-sandbox
 # MAGIC
-# MAGIC ## 1/ Ingest data and create your Vector Search index
+# MAGIC ## 1/ Create your Vector Search index
 # MAGIC
 # MAGIC <img src="https://github.com/databricks-demos/dbdemos-resources/blob/main/images/product/chatbot-rag/llm-rag-data-prep-0.png?raw=true" style="float: right; width: 500px; margin-left: 10px">
 # MAGIC
-# MAGIC The first step is to ingest and prepare the data before we can make use of our Vector Search index.
+# MAGIC The first step is to prepare the data before we can make use of our Vector Search index.
 # MAGIC
-# MAGIC We'll use the Data Engineering Lakehouse capabilities to ingest our documentation pages, split them into smaller chunks, compute the chunk embeddings and save them as a Delta Lake table.
+# MAGIC We'll compute the chunk embeddings and save them as a Delta Lake table.
 # MAGIC
 # MAGIC **What you will learn:**
-# MAGIC - Use langchain and your LLM tokenizer to create chunks from your documents
 # MAGIC - Introduction to Embedding models with Databricks Foundation Models
 # MAGIC - Create a Vector Search Index on top of your data to provide real-time similarity search
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Start the data ingestion and create a Vector Search Index: open the [01-Data-Preparation-and-Index]($./01-Data-Preparation-and-Index) notebook.
+# MAGIC Create a Vector Search Index: open the [01-Data-Preparation-and-Index]($./01-Data-Preparation-and-Index) notebook.
 
 # COMMAND ----------
 
@@ -151,10 +150,3 @@
 # MAGIC - Deploy real-time model endpoints to generate answers which leverage your custom data
 # MAGIC
 # MAGIC Interested in deploying your own models? Reach out to your account team!
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Going further
-# MAGIC
-# MAGIC Want to deep dive into RAG Evaluation, PDF extraction and self-managed Vector Search Index? Open the [01-PDF-Advanced-Data-Preparation]($../02-advanced/01-PDF-Advanced-Data-Preparation) notebook.

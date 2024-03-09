@@ -11,14 +11,12 @@
 
 VECTOR_SEARCH_ENDPOINT_NAME="fifa_vs_endpoint"
 
-DATABRICKS_SITEMAP_URL = "https://docs.databricks.com/en/doc-sitemap.xml"
-
 catalog = "wiki_data"
-
-#email = spark.sql('select current_user() as user').collect()[0]['user']
-#username = email.split('@')[0].replace('.', '_')
-#dbName = db = f"rag_chatbot_{username}"
 dbName = db = "fifa_2022"
+
+email = spark.sql('select current_user() as user').collect()[0]['user']
+username = email.split('@')[0].replace('.', '_')
+#dbName = db = f"rag_chatbot_{username}"
 
 # COMMAND ----------
 
