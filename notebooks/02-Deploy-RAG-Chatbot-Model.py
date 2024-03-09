@@ -55,10 +55,10 @@
 # MAGIC `pip install databricks-cli` <br/>
 # MAGIC - Configure the CLI. You'll need your workspace URL and a PAT token from your profile page<br>
 # MAGIC `databricks configure`
-# MAGIC - Create the dbdemos scope:<br/>
-# MAGIC `databricks secrets create-scope dbdemos`
+# MAGIC - Create the amld scope:<br/>
+# MAGIC `databricks secrets create-scope --scope amld`
 # MAGIC - Save your service principal secret. It will be used by the Model Endpoint to autenticate. If this is a demo/test, you can use one of your [PAT token](https://docs.databricks.com/en/dev-tools/auth/pat.html).<br>
-# MAGIC `databricks secrets put-secret dbdemos rag_sp_token`
+# MAGIC `databricks secrets put --scope amld --key sp_token`
 # MAGIC
 # MAGIC *Note: Make sure your service principal has access to the Vector Search index:*
 # MAGIC
@@ -79,8 +79,8 @@ host = "https://" + spark.conf.get("spark.databricks.workspaceUrl")
 
 #test_demo_permissions(
 #  host, 
-#  secret_scope="dbdemos", 
-#  secret_key="ryuta_token", 
+#  secret_scope="amld", 
+#  secret_key="sp_token", 
 #  vs_endpoint_name=VECTOR_SEARCH_ENDPOINT_NAME, 
 #  index_name=index_name, 
 #  embedding_endpoint_name="databricks-bge-large-en")
@@ -106,7 +106,7 @@ host = "https://" + spark.conf.get("spark.databricks.workspaceUrl")
 # DBTITLE 1,Setup authentication for our model
 # url used to send the request to your model from the serverless endpoint
 host = "https://" + spark.conf.get("spark.databricks.workspaceUrl")
-os.environ['DATABRICKS_TOKEN'] = dbutils.secrets.get("dbdemos", "ryuta_token")
+os.environ['DATABRICKS_TOKEN'] = dbutils.secrets.get("amld", "sp_token")
 
 # COMMAND ----------
 
@@ -188,7 +188,7 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatDatabricks
 
-TEMPLATE = """You are an assistant for Databricks users. You are answering python, coding, SQL, data engineering, spark, data science, DW and platform, API or infrastructure administration question related to Databricks. If the question is not related to one of these topics, kindly decline to answer. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer as concise as possible.
+TEMPLATE = """You are an assistant for users who want to know about FIFA 2022 World Cup. You are answering questions on the games, players, tournament, scores, statistics that are related to FIFA 2022 World Cup. If the question is not related to one of these topics, kindly decline to answer. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer as concise as possible.
 Use the following pieces of context to answer the question at the end:
 {context}
 Question: {question}
@@ -220,15 +220,19 @@ print(answer)
 
 # COMMAND ----------
 
+username
+
+# COMMAND ----------
+
 # DBTITLE 1,Register our chain to MLFlow
 from mlflow.models import infer_signature
 import mlflow
 import langchain
 
 mlflow.set_registry_uri("databricks-uc")
-model_name = f"{catalog}.{db}.fifa_chatbot_model"
+model_name = f"{catalog}.{db}.fifa_chatbot_model_{username}"
 
-with mlflow.start_run(run_name="fifa_chatbot_rag") as run:
+with mlflow.start_run(run_name=f"fifa_chatbot_rag_{username}") as run:
     signature = infer_signature(question, answer)
     model_info = mlflow.langchain.log_model(
         chain,
@@ -259,7 +263,7 @@ with mlflow.start_run(run_name="fifa_chatbot_rag") as run:
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.serving import EndpointCoreConfigInput, ServedModelInput
 
-serving_endpoint_name = f"dbdemos_endpoint_{catalog}_{db}"[:63]
+serving_endpoint_name = f"{catalog}_{db}_{username}"[:63]
 latest_model_version = get_latest_model_version(model_name)
 
 w = WorkspaceClient()
@@ -272,7 +276,7 @@ endpoint_config = EndpointCoreConfigInput(
             workload_size="Small",
             scale_to_zero_enabled=True,
             environment_vars={
-                "DATABRICKS_TOKEN": "{{secrets/dbdemos/ryuta_token}}",  # <scope>/<secret> that contains an access token
+                "DATABRICKS_TOKEN": "{{secrets/amld/sp_token}}",  # <scope>/<secret> that contains an access token
             }
         )
     ]
@@ -300,7 +304,7 @@ displayHTML(f'Your Model Endpoint Serving is now available. Open the <a href="/m
 
 # COMMAND ----------
 
-question = "Who defeated Germany in FIFA 2022 World Cup? And wht did that happen?"
+question = "Who defeated Germany in FIFA 2022 World Cup? And why did that happen?"
 
 answer = w.serving_endpoints.query(serving_endpoint_name, inputs=[{"query": question}])
 print(answer.predictions[0])
