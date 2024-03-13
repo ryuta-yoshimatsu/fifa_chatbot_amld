@@ -45,45 +45,9 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC   
-# MAGIC ###  This demo requires a secret to work:
-# MAGIC Your Model Serving Endpoint needs a secret to authenticate against your Vector Search Index (see [Documentation](https://docs.databricks.com/en/security/secrets/secrets.html)).  <br/>
-# MAGIC **Note: if you are using a shared demo workspace and you see that the secret is setup, please don't run these steps and do not override its value**<br/>
-# MAGIC
-# MAGIC - You'll need to [setup the Databricks CLI](https://docs.databricks.com/en/dev-tools/cli/install.html) on your laptop or using this cluster terminal: <br/>
-# MAGIC `pip install databricks-cli` <br/>
-# MAGIC - Configure the CLI. You'll need your workspace URL and a PAT token from your profile page<br>
-# MAGIC `databricks configure`
-# MAGIC - Create the amld scope:<br/>
-# MAGIC `databricks secrets create-scope --scope amld`
-# MAGIC - Save your service principal secret. It will be used by the Model Endpoint to autenticate. If this is a demo/test, you can use one of your [PAT token](https://docs.databricks.com/en/dev-tools/auth/pat.html).<br>
-# MAGIC `databricks secrets put --scope amld --key sp_token`
-# MAGIC
-# MAGIC *Note: Make sure your service principal has access to the Vector Search index:*
-# MAGIC
-# MAGIC ```
-# MAGIC spark.sql('GRANT USAGE ON CATALOG <catalog> TO `<YOUR_SP>`');
-# MAGIC spark.sql('GRANT USAGE ON DATABASE <catalog>.<db> TO `<YOUR_SP>`');
-# MAGIC from databricks.sdk import WorkspaceClient
-# MAGIC import databricks.sdk.service.catalog as c
-# MAGIC WorkspaceClient().grants.update(c.SecurableType.TABLE, <index_name>, 
-# MAGIC                                 changes=[c.PermissionsChange(add=[c.Privilege["SELECT"]], principal="<YOUR_SP>")])
-# MAGIC   ```
-
-# COMMAND ----------
-
 # DBTITLE 1,Make sure your SP has read access to your Vector Search Index
 index_name=f"{catalog}.{db}.embeddings_text_vs_index"
 host = "https://" + spark.conf.get("spark.databricks.workspaceUrl")
-
-#test_demo_permissions(
-#  host, 
-#  secret_scope="amld", 
-#  secret_key="sp_token", 
-#  vs_endpoint_name=VECTOR_SEARCH_ENDPOINT_NAME, 
-#  index_name=index_name, 
-#  embedding_endpoint_name="databricks-bge-large-en")
 
 # COMMAND ----------
 
@@ -106,7 +70,7 @@ host = "https://" + spark.conf.get("spark.databricks.workspaceUrl")
 # DBTITLE 1,Setup authentication for our model
 # url used to send the request to your model from the serverless endpoint
 host = "https://" + spark.conf.get("spark.databricks.workspaceUrl")
-os.environ['DATABRICKS_TOKEN'] = dbutils.secrets.get("amld", "sp_token")
+os.environ['DATABRICKS_TOKEN'] = dbutils.secrets.get("amld", "token")
 
 # COMMAND ----------
 
@@ -276,7 +240,7 @@ endpoint_config = EndpointCoreConfigInput(
             workload_size="Small",
             scale_to_zero_enabled=True,
             environment_vars={
-                "DATABRICKS_TOKEN": "{{secrets/amld/sp_token}}",  # <scope>/<secret> that contains an access token
+                "DATABRICKS_TOKEN": "{{secrets/amld/token}}",  # <scope>/<secret> that contains an access token
             }
         )
     ]
