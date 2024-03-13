@@ -16,13 +16,12 @@ dbName = db = "fifa_2022"
 
 email = spark.sql('select current_user() as user').collect()[0]['user']
 username = email.split('@')[0].replace('.', '_')
-#dbName = db = f"rag_chatbot_{username}"
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ### License
-# MAGIC This demo installs the following external libraries on top of DBR(ML):
+# MAGIC This demo installs the following external libraries on top of DBR (ML):
 # MAGIC
 # MAGIC
 # MAGIC | Library | License |
@@ -38,8 +37,7 @@ username = email.split('@')[0].replace('.', '_')
 # MAGIC | tiktoken      | [MIT](https://github.com/openai/tiktoken/blob/main/LICENSE)     |
 # MAGIC | evaluate      | [Apache2](https://pypi.org/project/evaluate/)     |
 # MAGIC | torch      | [BDS-3](https://github.com/intel/torch/blob/master/LICENSE.md)     |
-# MAGIC | tiktoken      | [MIT](https://github.com/openai/tiktoken/blob/main/LICENSE)     |
-# MAGIC
-# MAGIC
-# MAGIC
-# MAGIC
+
+# COMMAND ----------
+
+
