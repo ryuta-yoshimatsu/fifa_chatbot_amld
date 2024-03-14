@@ -6,7 +6,9 @@
 # COMMAND ----------
 
 # Participant Info
-CATALOG_NAME = "wiki_data_medaillon"
+dbutils.widgets.text("CATALOG_NAME", "")
+CATALOG_NAME = dbutils.widgets.get("CATALOG_NAME")
+
 
 # COMMAND ----------
 
