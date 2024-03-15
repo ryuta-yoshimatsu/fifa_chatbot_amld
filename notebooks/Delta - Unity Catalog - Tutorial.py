@@ -22,7 +22,7 @@ spark.sql(f"USE CATALOG {catalog_name}")
 # COMMAND ----------
 
 # clone data from workshop catalog to your user catalog
-workshop_catalog = "gtc_catalog"
+workshop_catalog = "amld_catalog"
 spark.sql(f"CREATE TABLE IF NOT EXISTS {catalog_name}.default.laptop_prices_euro SHALLOW CLONE {workshop_catalog}.default.laptop_prices_euro")
 
 # COMMAND ----------
