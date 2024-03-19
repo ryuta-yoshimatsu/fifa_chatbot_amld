@@ -259,10 +259,10 @@ table_name = "my_uploaded_laptop_price_table"
 
 # 3.
 # # Make sure you have uploaded the file
-# path = f"file:/Workspace/Users/{user_email}/laptop_price_euro.csv"
-# dbutils.fs.ls(path)
-# df = spark.read.format("csv").option("header", True).load(path)
-# display(df)
+path = f"file:/Workspace/Users/{user_email}/laptop_price_euro.csv"
+dbutils.fs.ls(path)
+df = spark.read.format("csv").option("header", True).load(path)
+display(df)
 
 # COMMAND ----------
 
