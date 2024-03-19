@@ -49,7 +49,7 @@ def score_model(model_uri, databricks_token, data):
 # COMMAND ----------
 
 MODEL_VERSION_URI = "https://adb-6123518810556516.16.azuredatabricks.net/serving-endpoints/amld_demo_model_serving/invocations"
-DATABRICKS_API_TOKEN = ""
+DATABRICKS_API_TOKEN = dbutils.secrets.get("amld", "token")
 
 # COMMAND ----------
 
