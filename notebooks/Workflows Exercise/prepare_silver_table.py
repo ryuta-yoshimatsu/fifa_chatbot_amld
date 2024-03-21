@@ -66,5 +66,4 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG_NAME}.silver")
 
 
 # Write the spark dataframe to the silver table
-#df_spark.write.mode("overwrite").saveAsTable(f"{CATALOG_NAME}.silver.wiki_sections_clean")
 df.write.mode("overwrite").saveAsTable(f"{CATALOG_NAME}.silver.wiki_sections_clean")
