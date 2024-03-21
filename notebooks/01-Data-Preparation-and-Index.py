@@ -138,8 +138,8 @@ print(f"Endpoint named {VECTOR_SEARCH_ENDPOINT_NAME} is ready.")
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC ALTER TABLE wiki_data.fifa_2022.embeddings_text SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
+# %sql
+# ALTER TABLE wiki_data.fifa_2022.embeddings_text SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
 
 # COMMAND ----------
 
@@ -163,9 +163,10 @@ if not index_exists(vsc, VECTOR_SEARCH_ENDPOINT_NAME, vs_index_fullname):
     embedding_source_column='text', #The column containing our text
     embedding_model_endpoint_name='databricks-bge-large-en' #The embedding endpoint used to create the embeddings
   )
-else:
-  #Trigger a sync to update our vs content with the new data saved in the table
-  vsc.get_index(VECTOR_SEARCH_ENDPOINT_NAME, vs_index_fullname).sync()
+# else:
+#   Resync to update the endpoint if needed. Not syncung will result to sync warnings, but the vector endpoint still works
+#   #Trigger a sync to update our vs content with the new data saved in the table
+#   vsc.get_index(VECTOR_SEARCH_ENDPOINT_NAME, vs_index_fullname).sync()
 
 #Let's wait for the index to be ready and all our embeddings to be created and indexed
 wait_for_index_to_be_ready(vsc, VECTOR_SEARCH_ENDPOINT_NAME, vs_index_fullname)
